@@ -27,7 +27,7 @@ if datafile is not None:
     print(datafile)
 
 
-    doc=fitz.open("./static/"+datafile.name)
+    doc=fitz.open("./"+datafile.name)
     pages=doc.page_count
     st.write("文件页数：",pages)
 
@@ -45,7 +45,7 @@ if datafile is not None:
     st.write("转换完成！！！")
     st.balloons()
 
-    for i in range(fitz.open("./static/"+datafile.name).page_count):
+    for i in range(fitz.open("./"+datafile.name).page_count):
       image=os.path.join(output+"{}.png".format(i))
 
       # image
