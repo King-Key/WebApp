@@ -1,0 +1,9 @@
+streamlit
+requests
+bs4
+datetime
+transformers
+torch
+sentencepiece
+PyMuPDF==1.21.1
+stqdm
