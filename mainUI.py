@@ -2,13 +2,15 @@ import streamlit as st
 from pdf2png import pdf2png
 from search_github_app import search_github
 from search_arxiv_app import search_arxiv
+from mp42gif import mp42gif
 
 st.set_page_config(page_title='Streamlit App')
 
 app_pages = {
     'pdf2png': pdf2png,
     'GitHub': search_github,
-    'Arxiv': search_arxiv
+    'Arxiv': search_arxiv,
+    'video2gif': mp42gif
 }
 
 st.sidebar.write("Web APP")
