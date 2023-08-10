@@ -11,7 +11,7 @@ def save_uploaded_file(uploadedfile):
 
 def mp42gif():
     html("<center><h1> 视频 转 gif </center>")
-    datafile = streamlit.file_uploader("Upload 视频文件",type=['mp4'])
+    datafile = streamlit.file_uploader("Upload 视频文件",type=['mp4,mov'])
     if datafile is not None:
         file_details = {"FileName":datafile.name,"FileType":datafile.type}
         save_uploaded_file(datafile)
