@@ -15,7 +15,7 @@ def mp42gif():
     if datafile is not None:
         file_details = {"FileName":datafile.name,"FileType":datafile.type}
         save_uploaded_file(datafile)
-        videoClip=VideoFileClip(datafile.name).resize((488,225)))
+        videoClip=VideoFileClip(datafile.name).resize((488,225))
         videoClip.write_gif("output.gif",fps=15)
         streamlit.balloons()
         streamlit.image("output.gif")
