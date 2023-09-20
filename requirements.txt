@@ -8,3 +8,4 @@ sentencepiece
 PyMuPDF==1.21.1
 stqdm
 moviepy
+pillow
