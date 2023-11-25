@@ -1,7 +1,6 @@
 import streamlit as st
 from transformers import MarianMTModel, MarianTokenizer
 
-
 def transPrompt():
     def translate_text(text, model, tokenizer, target_language='en'):
         # 使用模型和标记器进行翻译
@@ -19,7 +18,7 @@ def transPrompt():
     st.title("中英文翻译器")
 
     # 输入框
-    user_input = st.text_input("请输入中文文本:")
+    user_input = st.text_input("请输入中文文本，用逗号隔开:")
 
     if user_input:
         # 选择目标语言
@@ -29,8 +28,14 @@ def transPrompt():
         language_mapping = {"英语": "en", "Spanish": "es", "French": "fr"}
         target_language_code = language_mapping.get(target_language, "en")
 
-        # 翻译文本
-        translated_text = translate_text(user_input, model, tokenizer, target_language=target_language_code)
+        # 以逗号分隔中文文本
+        chinese_texts = user_input.split(',')
+
+        # 翻译每个中文文本
+        translated_texts = [translate_text(text.strip(), model, tokenizer, target_language=target_language_code) for text in chinese_texts]
+
+        # 将翻译结果以逗号分隔显示
+        translated_result = ', '.join(translated_texts)
 
         # 显示翻译结果
-        st.write(f"翻译结果 ({target_language}): {translated_text}")
+        st.write(f"翻译结果 ({target_language}): {translated_result}")
