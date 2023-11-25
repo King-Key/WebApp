@@ -14,7 +14,7 @@ app_pages = {
     'Arxiv': search_arxiv,
     'video2gif': mp42gif,
     '微信头像添加国旗背景': makde_in_china,
-    '提示词翻译'： transPrompt
+    '提示词翻译': transPrompt
 }
 
 st.sidebar.write("Web APP")
