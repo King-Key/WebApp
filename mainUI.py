@@ -4,6 +4,7 @@ from search_github_app import search_github
 from search_arxiv_app import search_arxiv
 from mp42gif import mp42gif
 from CN_PNG import makde_in_china
+from transprompt import transPrompt
 
 st.set_page_config(page_title='Streamlit App')
 
@@ -13,6 +14,7 @@ app_pages = {
     'Arxiv': search_arxiv,
     'video2gif': mp42gif,
     '微信头像添加国旗背景': makde_in_china,
+    '提示词翻译'： transPrompt
 }
 
 st.sidebar.write("Web APP")
