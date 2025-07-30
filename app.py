@@ -9,7 +9,7 @@ st.sidebar.title("🧰 工具导航")
 st.sidebar.markdown("选择你想使用的工具：")
 page = st.sidebar.radio("功能页面", ["📄 PDF 转图片", "🇨🇳 微信头像加国旗背景"])
 st.sidebar.markdown("---")
-st.sidebar.caption("Made with ❤️ by QingKeLab")
+st.sidebar.caption("Made with ❤️ by WangGuo")
 
 # 页面跳转
 if page == "📄 PDF 转图片":
