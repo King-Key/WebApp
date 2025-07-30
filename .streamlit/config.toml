@@ -1,0 +1,11 @@
+[theme]
+base="light"
+primaryColor="#d62728"                  # 主色（红色）
+backgroundColor="#ffffff"              # 背景色
+secondaryBackgroundColor="#f0f2f6"     # 侧边栏背景
+textColor="#262730"                    # 文本颜色
+font="sans serif"
+
+[server]
+enableXsrfProtection = false
+headless = true

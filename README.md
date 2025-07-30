@@ -47,3 +47,18 @@ streamlit run app.py
 
 ---
 
+
+
+## 📦 在线部署（Streamlit Community Cloud）
+
+你可以通过以下方式将项目部署到 [Streamlit Cloud](https://streamlit.io/cloud)：
+
+1. 将本项目上传到 GitHub 仓库
+2. 打开：https://streamlit.io/cloud
+3. 点击 “New app”，选择你上传的仓库
+4. 设置：
+   - **Main file path**: `app.py`
+   - **Python version**: `3.10` 或自动识别
+   - **Packages**: 自动读取 `requirements.txt`
+5. 点击部署即可在线访问！
+
