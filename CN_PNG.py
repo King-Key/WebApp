@@ -6,7 +6,7 @@ def makde_in_china():
     st.title("🇨🇳 微信头像加国旗")
     st.markdown("上传头像，自动添加渐变国旗背景。")
 
-    flag = Image.open('assert/china.png').convert("RGBA")
+    flag = Image.open('assets/china.png').convert("RGBA")
     head = st.file_uploader("📤 上传头像 (PNG/JPG)", type=["png", "jpg", "jpeg"])
 
     if head:
