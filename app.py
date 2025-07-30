@@ -18,5 +18,7 @@ st.sidebar.caption("Made with ❤️ by WangGuo")
 # 页面跳转
 if page == "📄 PDF 转图片":
     run_pdf_to_png_app()
-else:
+elif page == "🇨🇳 微信头像加国旗背景":
     makde_in_china()
+elif page == "🎬 音频 + 图片合成视频":
+    make_video_from_audio_and_images()
