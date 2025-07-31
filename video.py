@@ -2,56 +2,65 @@ from moviepy.editor import (
     ImageClip,
     AudioFileClip,
     concatenate_videoclips,
-    TextClip,
     CompositeVideoClip,
-    concatenate_videoclips
+    TextClip
 )
 from PIL import Image
 import os
 import tempfile
 
-def make_video_from_audio_and_images(audio_file, image_files, subtitle_text="这是一个合成视频", duration_per_image=3):
-    # 加载音频
-    audio = AudioFileClip(audio_file)
+# 自动兼容 Pillow 新旧版本的缩放方式
+try:
+    resample = Image.Resampling.LANCZOS
+except AttributeError:
+    resample = Image.LANCZOS
 
-    # 判断 Pillow 版本使用正确的 resample
-    try:
-        resample = Image.Resampling.LANCZOS
-    except AttributeError:
-        resample = Image.ANTIALIAS
+def make_video_from_audio_and_images(images, audio_file, subtitles=None, duration_per_image=3):
+    """
+    将上传的图片与音频合成为一个视频，图片可加字幕，含淡入淡出转场效果。
 
-    # 创建视频片段列表
+    :param images: 图片文件列表（streamlit 上传的文件）
+    :param audio_file: 音频文件（streamlit 上传的文件）
+    :param subtitles: 字幕文本列表（可选）
+    :param duration_per_image: 每张图持续秒数
+    :return: 输出视频路径
+    """
     clips = []
-    for idx, img_file in enumerate(image_files):
-        # 打开图片并转换为 RGB 格式
+    tmp_dir = tempfile.mkdtemp()
+
+    for idx, img_file in enumerate(images):
+        # 保存临时图片
+        img_path = os.path.join(tmp_dir, f"image_{idx}.png")
         image = Image.open(img_file).convert("RGB")
+        image = image.resize((1280, 720), resample)
+        image.save(img_path)
 
-        # 缩放为统一尺寸（可自定义）
-        image = image.resize((720, 480), resample)
+        # 创建 ImageClip 并加字幕
+        img_clip = ImageClip(img_path).set_duration(duration_per_image)
 
-        # 临时保存处理后的图片
-        tmp_img_path = os.path.join(tempfile.gettempdir(), f"frame_{idx}.png")
-        image.save(tmp_img_path)
+        # 添加字幕（如果有）
+        if subtitles and idx < len(subtitles) and subtitles[idx].strip():
+            txt = TextClip(subtitles[idx], fontsize=48, color='white', font='Arial-Bold', method='caption',
+                           size=(1180, None)).set_position(("center", "bottom")).set_duration(duration_per_image)
+            img_clip = CompositeVideoClip([img_clip, txt])
 
-        # 创建 ImageClip
-        img_clip = ImageClip(tmp_img_path).set_duration(duration_per_image).fadein(0.5).fadeout(0.5)
+        # 添加淡入淡出效果
+        img_clip = img_clip.crossfadein(0.5).crossfadeout(0.5)
 
-        # 添加字幕
-        subtitle = TextClip(subtitle_text, fontsize=24, color='white', font='Arial', bg_color='black')
-        subtitle = subtitle.set_duration(duration_per_image).set_position(("center", "bottom"))
+        clips.append(img_clip)
 
-        # 合成字幕和图像
-        final_clip = CompositeVideoClip([img_clip, subtitle])
-        clips.append(final_clip)
-
-    # 拼接所有图像片段
+    # 合并所有图片 clip
     video = concatenate_videoclips(clips, method="compose")
 
-    # 配上音频并设置为最终时长
-    video = video.set_audio(audio).set_duration(audio.duration)
+    # 添加音频
+    audio = AudioFileClip(audio_file)
+    final = video.set_audio(audio)
 
-    # 输出视频文件
-    output_path = os.path.join(tempfile.gettempdir(), "final_video.mp4")
-    video.write_videofile(output_path, fps=24, codec='libx264', audio_codec='aac')
+    # 保证音视频同步，裁剪为音频长度
+    final = final.set_duration(audio.duration)
+
+    # 输出文件路径
+    output_path = os.path.join(tmp_dir, "output_video.mp4")
+    final.write_videofile(output_path, fps=24)
 
     return output_path
