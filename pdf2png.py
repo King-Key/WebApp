@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 import textwrap
 
 # ====== PDF 转图片 ======
-def run_pdf_to_png_app(pdf_stream, zoom_x=2.0, zoom_y=2.0, rotation_angle=0):
+def pdf_to_images(pdf_stream, zoom_x=2.0, zoom_y=2.0, rotation_angle=0):
     images = []
     tmpdirname = tempfile.mkdtemp()
     pdf = fitz.open(stream=pdf_stream, filetype="pdf")
@@ -100,7 +100,7 @@ def show_results(paths):
     st.download_button("📦 下载全部（ZIP）", data=zip_file, file_name="converted_images.zip", mime="application/zip")
 
 # ====== 主程序 ======
-def run_app():
+def run_pdf_to_png_app():
     st.title("📄 PDF / Markdown 转 PNG 图片")
     st.markdown("支持上传 PDF / 输入 PDF 链接 / 输入 Markdown 内容，生成 PNG 图片。")
 
