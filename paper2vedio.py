@@ -7,7 +7,7 @@ import json
 import asyncio
 import edge_tts
 import google.generativeai as genai
-from moviepy import * 
+from moviepy import *
 from PIL import Image
 import io
 import requests

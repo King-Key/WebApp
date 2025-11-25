@@ -24,11 +24,8 @@ st.sidebar.caption("Made with ❤️ by WangGuo")
 if page == "📰 论文转播客视频": # 新增功能页面
     run_paper_to_video_app()
 elif page == "📄 PDF 转图片":
-    # run_pdf_to_png_app() # 替换为你的实际函数名
-    st.info("功能占位：PDF 转图片") # 占位符
+    run_pdf_to_png_app()
 elif page == "🇨🇳 微信头像加国旗背景":
-    # makde_in_china() # 替换为你的实际函数名
-    st.info("功能占位：头像加国旗") # 占位符
+    makde_in_china()
 elif page == "🎬 音频 + 图片合成视频":
-    # make_video_from_audio_and_images() # 替换为你的实际函数名
-    st.info("功能占位：合成视频") # 占位符
+    make_video_from_audio_and_images()
