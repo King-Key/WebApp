@@ -1,5 +1,4 @@
 import streamlit as st
-import fitz  # PyMuPDF
 import os, tempfile, zipfile, requests, re
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
