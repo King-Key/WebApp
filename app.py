@@ -1,8 +1,8 @@
 import streamlit as st
 # 导入你的其他功能模块
-# from pdf2png import run_pdf_to_png_app 
-# from CN_PNG import makde_in_china
-# from video import make_video_from_audio_and_images
+from pdf2png import run_pdf_to_png_app 
+from CN_PNG import makde_in_china
+from video import make_video_from_audio_and_images
 
 # 导入新的功能模块
 from paper2vedio import run_paper_to_video_app 
