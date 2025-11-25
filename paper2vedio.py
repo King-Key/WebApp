@@ -2,6 +2,7 @@
 
 import streamlit as st
 import os
+import fitz 
 import json
 import asyncio
 import edge_tts
