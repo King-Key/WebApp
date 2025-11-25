@@ -5,7 +5,7 @@ import streamlit as st
 # from video import make_video_from_audio_and_images
 
 # 导入新的功能模块
-from paper2video import run_paper_to_video_app 
+from paper2vedio import run_paper_to_video_app 
 
 st.set_page_config(page_title='AI 工具箱', layout='centered', page_icon='🧰')
 
