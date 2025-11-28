@@ -1,6 +1,5 @@
 streamlit
 PyMuPDF
-fitz
 Pillow
 requests
 python-dotenv
