@@ -3,6 +3,7 @@ import os, tempfile, zipfile, requests, re
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
+import fitz
 
 # ====== PDF 转图片 ======
 def pdf_to_images(pdf_stream, zoom_x=2.0, zoom_y=2.0, rotation_angle=0):

@@ -2,8 +2,6 @@ streamlit
 PyMuPDF
 fitz
 Pillow
-moviepy==1.0.3
 requests
-google-generativeai
-edge-tts
 python-dotenv
+watchdog
