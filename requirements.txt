@@ -1,6 +1,6 @@
 streamlit
-fitz
 PyMuPDF
+fitz
 Pillow
 moviepy==1.0.3
 requests
