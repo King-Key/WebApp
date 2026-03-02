@@ -21,8 +21,7 @@ def _day_window_utc(target_date: dt.date):
     return start_utc, end_utc
 
 
-def fetch_arxiv_for_today(categories, max_results=200):
-    target_date = _beijing_today()
+def fetch_arxiv_for_date(categories, target_date: dt.date, max_results=200):
     start_utc, end_utc = _day_window_utc(target_date)
     from_ts = start_utc.strftime("%Y%m%d%H%M")
     to_ts = end_utc.strftime("%Y%m%d%H%M")
@@ -52,33 +51,36 @@ def fetch_arxiv_for_today(categories, max_results=200):
 
 
 def run_arxiv_today_app():
-    st.title("📚 今日 arXiv 论文")
-    st.markdown("点击按钮，一键获取今天（北京时间）发布的 arXiv 论文。")
+    st.title("📚 arXiv 当天最新论文")
+    st.markdown("选择日期后，一键获取该日期（北京时间）提交的最新 arXiv 论文。")
 
     default_cats = ["cs.AI", "cs.CV", "cs.CL", "cs.LG", "stat.ML"]
     categories = st.multiselect("选择类别", default_cats, default=default_cats)
+    target_date = st.date_input("选择日期（北京时间）", value=_beijing_today(), max_value=_beijing_today())
     max_results = st.slider("每个类别最大抓取数", min_value=50, max_value=500, value=200, step=50)
 
-    if st.button("一键获取今日论文", type="primary"):
+    if st.button("获取所选日期论文", type="primary"):
         if not categories:
             st.warning("请至少选择一个类别。")
             return
         try:
-            with st.spinner("正在抓取今日论文..."):
-                target_date, papers_by_cat = fetch_arxiv_for_today(
-                    categories=categories, max_results=max_results
-                )
+            with st.spinner("正在抓取论文..."):
+                _, papers_by_cat = fetch_arxiv_for_date(categories=categories, target_date=target_date, max_results=max_results)
 
             st.success(f"抓取完成：{target_date.isoformat()}（北京时间）")
             for cat in categories:
                 papers = papers_by_cat.get(cat, [])
+                papers.sort(key=lambda x: x["published"], reverse=True)
                 st.subheader(f"{cat}（{len(papers)} 篇）")
                 if not papers:
-                    st.info("该类别今天暂无结果。")
+                    st.info("该类别在所选日期暂无结果。")
                     continue
                 for p in papers:
+                    published_beijing = p["published"].astimezone(BEIJING_TZ)
                     st.markdown(f"**{p['title']}**")
-                    st.caption(f"作者：{p['authors']} | 发布时间(UTC)：{p['published']:%Y-%m-%d %H:%M}")
+                    st.caption(
+                        f"作者：{p['authors']} | 提交时间(北京时间)：{published_beijing:%Y-%m-%d %H:%M}"
+                    )
                     st.markdown(f"[论文链接]({p['url']})")
                     if p["summary"]:
                         st.write(p["summary"])
