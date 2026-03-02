@@ -1,84 +1,79 @@
 import streamlit as st
-import os, tempfile, zipfile, requests, re
-from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
+import os
+import re
+import tempfile
 import textwrap
+import zipfile
+from io import BytesIO
+
 import fitz
-import numpy as np
+import requests
+from PIL import Image, ImageDraw, ImageFont
+
+REQUEST_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    )
+}
 
 # ====== PDF 转图片（纵向合并功能） ======
 def pdf_to_images(pdf_stream, pages_per_image=1, zoom_x=2.0, zoom_y=2.0, rotation_angle=0):
     images = []
     tmpdirname = tempfile.mkdtemp()
-    
-    # 临时目录用于存放单页的中间图片
-    temp_page_dir = tempfile.mkdtemp()
-    
-    pdf = fitz.open(stream=pdf_stream, filetype="pdf")
-    num_pages = len(pdf)
-    
-    # 确保 pages_per_image 至少为 1
-    pages_per_image = max(1, pages_per_image)
 
-    # 1. 预转换所有单页为 PIL Image 对象
+    pages_per_image = max(1, int(pages_per_image))
     pil_pages = []
-    page_width, page_height = 0, 0
     matrix = fitz.Matrix(zoom_x, zoom_y).prerotate(rotation_angle)
-    
-    for i in range(num_pages):
-        pix = pdf[i].get_pixmap(matrix=matrix, alpha=False)
-        img_data = pix.tobytes("ppm")
-        pil_img = Image.open(BytesIO(img_data))
-        pil_pages.append(pil_img)
-        if i == 0:
-            page_width, page_height = pil_img.size
-            
-    pdf.close()
 
-    # 2. 按指定数量合并图片
+    pdf = fitz.open(stream=pdf_stream, filetype="pdf")
+    try:
+        for i in range(len(pdf)):
+            pix = pdf[i].get_pixmap(matrix=matrix, alpha=False)
+            pil_img = Image.open(BytesIO(pix.tobytes("ppm"))).convert("RGB")
+            pil_pages.append(pil_img)
+    finally:
+        pdf.close()
+
+    num_pages = len(pil_pages)
+    if num_pages == 0:
+        return images, tmpdirname
+
     for i in range(0, num_pages, pages_per_image):
         current_pages = pil_pages[i:i + pages_per_image]
-        
-        # <<< 核心修改 >>>
-        # 计算合并后画布的大小（纵向合并）
-        merged_width = page_width  # 宽度保持单页宽度
-        merged_height = page_height * len(current_pages) # 高度为所有页高之和
-        
-        # 创建空白画布
-        merged_img = Image.new('RGB', (merged_width, merged_height), color='white')
-        
-        # 粘贴页面
-        y_offset = 0  # 使用 Y 轴偏移量
+        merged_width = max(page.width for page in current_pages)
+        merged_height = sum(page.height for page in current_pages)
+        merged_img = Image.new("RGB", (merged_width, merged_height), color="white")
+
+        y_offset = 0
         for page_img in current_pages:
-            # 粘贴到 (0, y_offset) 位置
-            merged_img.paste(page_img, (0, y_offset)) 
-            # 增加 Y 偏移量
-            y_offset += page_height 
-        
-        # 保存合并后的图片
+            x_offset = (merged_width - page_img.width) // 2
+            merged_img.paste(page_img, (x_offset, y_offset))
+            y_offset += page_img.height
+
         output_path = os.path.join(tmpdirname, f"merged_page_{i // pages_per_image + 1}.png")
         merged_img.save(output_path)
         images.append(output_path)
-        
+
     return images, tmpdirname
+
 
 def zip_images(image_paths):
     buffer = BytesIO()
-    # 修正错误：使用 ZIP_DEFLATED
-    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zipf: 
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
         for p in image_paths:
             zipf.write(p, arcname=os.path.basename(p))
     buffer.seek(0)
     return buffer
 
+
 # ====== Markdown 转图片（简易样式版） ======
 def markdown_to_image(md_text, font_size=20, width=800, padding=20):
-    # 尝试加载字体
     try:
         font = ImageFont.truetype("arial.ttf", font_size)
         bold_font = ImageFont.truetype("arialbd.ttf", font_size)
         mono_font = ImageFont.truetype("cour.ttf", font_size)
-    except:
+    except OSError:
         font = ImageFont.load_default()
         bold_font = font
         mono_font = font
@@ -200,9 +195,12 @@ def run_pdf_to_png_app():
     with tab2:
         pdf_url = st.text_input("请输入 PDF 链接")
         if pdf_url and st.button("下载并转换", key="link_convert"):
+            if not pdf_url.startswith(("http://", "https://")):
+                st.warning("请输入有效的 PDF 链接（以 http:// 或 https:// 开头）。")
+                return
             try:
                 with st.spinner("正在下载 PDF..."):
-                    r = requests.get(pdf_url, timeout=15)
+                    r = requests.get(pdf_url, headers=REQUEST_HEADERS, timeout=15)
                     r.raise_for_status()
                     pdf_bytes = BytesIO(r.content)
                 with st.spinner("正在转换为图片..."):
