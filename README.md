@@ -2,7 +2,7 @@
 
 ## 功能介绍
 
-本项目包含三个 Streamlit 页面：
+本项目包含四个 Streamlit 页面：
 
 1. **PDF 转 PNG 图片**
    - 上传 PDF 文件并逐页转换为图片
@@ -19,6 +19,10 @@
    - 自动分页生成小红书风格封面图 + 正文图
    - 支持在线预览和 ZIP 打包下载
 
+4. **一键获取今日 arXiv 论文**
+   - 按类别一键抓取今天（北京时间）发布的论文
+   - 展示标题、作者、摘要和论文链接
+
 ## 项目结构
 
 ```
@@ -27,6 +31,7 @@
 ├── pdf2png.py            # PDF 转图模块
 ├── CN_PNG.py             # 国旗头像模块
 ├── article_to_xhs.py     # 文章链接转小红书图片模块
+├── arxiv_today.py        # 今日 arXiv 论文模块
 ├── assets/
 │   └── china.png         # 中国国旗图片
 ├── requirements.txt

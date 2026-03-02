@@ -1,6 +1,7 @@
 import streamlit as st
 
 from CN_PNG import made_in_china
+from arxiv_today import run_arxiv_today_app
 from article_to_xhs import run_article_to_xhs_app
 from pdf2png import run_pdf_to_png_app
 
@@ -14,6 +15,7 @@ pages = {
     "📄 PDF 转图片": run_pdf_to_png_app,
     "🇨🇳 微信头像加国旗背景": made_in_china,
     "📝 链接转小红书图片": run_article_to_xhs_app,
+    "📚 今日 arXiv 论文": run_arxiv_today_app,
 }
 page = st.sidebar.radio("功能页面", list(pages.keys()))
 st.sidebar.markdown("---")
